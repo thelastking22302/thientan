@@ -1,0 +1,46 @@
+{"level":"error","msg":"Fails to connect to database: failed to connect to `host=postgres user=postgres database=thientandb`: hostname resolving error (lookup postgres: no such host)","time":"24242-02-242 14:37:00"}
+{"level":"info","msg":"Connect suscess to database: \u003cnil\u003e","time":"24242-02-242 14:37:00"}
+{"level":"error","msg":"Fails to connect to database: failed to connect to `host=postgres user=postgres database=thientandb`: hostname resolving error (lookup postgres: no such host)","time":"24242-02-242 14:37:02"}
+{"level":"info","msg":"Connect suscess to database: \u003cnil\u003e","time":"24242-02-242 14:37:02"}
+{"level":"error","msg":"Fails to connect to database: failed to connect to `host=postgres user=postgres database=thientandb`: hostname resolving error (lookup postgres: no such host)","time":"24242-02-242 14:37:04"}
+{"level":"info","msg":"Connect suscess to database: \u003cnil\u003e","time":"24242-02-242 14:37:04"}
+{"level":"error","msg":"Fails to connect to database: failed to connect to `host=postgres user=postgres database=thientandb`: hostname resolving error (lookup postgres: no such host)","time":"24242-02-242 14:37:06"}
+{"level":"info","msg":"Connect suscess to database: \u003cnil\u003e","time":"24242-02-242 14:37:06"}
+{"level":"error","msg":"Fails to connect to database: failed to connect to `host=postgres user=postgres database=thientandb`: hostname resolving error (lookup postgres: no such host)","time":"24242-02-242 14:37:09"}
+{"level":"info","msg":"Connect suscess to database: \u003cnil\u003e","time":"24242-02-242 14:37:09"}
+{"level":"error","msg":"Fails to connect to database: failed to connect to `host=postgres user=postgres database=thientandb`: hostname resolving error (lookup postgres: no such host)","time":"24242-02-242 14:37:11"}
+{"level":"info","msg":"Connect suscess to database: \u003cnil\u003e","time":"24242-02-242 14:37:11"}
+{"level":"error","msg":"Fails to connect to database: failed to connect to `host=postgres user=postgres database=thientandb`: hostname resolving error (lookup postgres: no such host)","time":"24242-02-242 14:37:13"}
+{"level":"info","msg":"Connect suscess to database: \u003cnil\u003e","time":"24242-02-242 14:37:13"}
+{"level":"error","msg":"Fails to connect to database: failed to connect to `host=postgres user=postgres database=thientandb`: hostname resolving error (lookup postgres: no such host)","time":"24242-02-242 14:37:16"}
+{"level":"info","msg":"Connect suscess to database: \u003cnil\u003e","time":"24242-02-242 14:37:16"}
+{"level":"error","msg":"Fails to connect to database: failed to connect to `host=postgres user=postgres database=thientandb`: hostname resolving error (lookup postgres: no such host)","time":"24242-02-242 14:37:18"}
+{"level":"info","msg":"Connect suscess to database: \u003cnil\u003e","time":"24242-02-242 14:37:18"}
+{"level":"error","msg":"Fails to connect to database: failed to connect to `host=postgres user=postgres database=thientandb`: hostname resolving error (lookup postgres: no such host)","time":"24242-02-242 14:37:20"}
+{"level":"info","msg":"Connect suscess to database: \u003cnil\u003e","time":"24242-02-242 14:37:20"}
+{"level":"error","msg":"Fails to connect to database: failed to connect to `host=postgres user=postgres database=thientandb`: hostname resolving error (lookup postgres: no such host)","time":"24242-02-242 14:37:22"}
+{"level":"info","msg":"Connect suscess to database: \u003cnil\u003e","time":"24242-02-242 14:37:22"}
+{"level":"error","msg":"Fails to connect to database: failed to connect to `host=postgres user=postgres database=thientandb`: hostname resolving error (lookup postgres: no such host)","time":"24242-02-242 14:37:25"}
+{"level":"info","msg":"Connect suscess to database: \u003cnil\u003e","time":"24242-02-242 14:37:25"}
+{"level":"error","msg":"Fails to connect to database: failed to connect to `host=postgres user=postgres database=thientandb`: hostname resolving error (lookup postgres: no such host)","time":"24242-02-242 14:37:27"}
+{"level":"info","msg":"Connect suscess to database: \u003cnil\u003e","time":"24242-02-242 14:37:27"}
+{"level":"error","msg":"Fails to connect to database: failed to connect to `host=postgres user=postgres database=thientandb`: hostname resolving error (lookup postgres: no such host)","time":"24242-02-242 14:37:29"}
+{"level":"info","msg":"Connect suscess to database: \u003cnil\u003e","time":"24242-02-242 14:37:29"}
+{"level":"error","msg":"Fails to connect to database: failed to connect to `host=postgres user=postgres database=thientandb`: hostname resolving error (lookup postgres: no such host)","time":"24242-02-242 14:37:32"}
+{"level":"info","msg":"Connect suscess to database: \u003cnil\u003e","time":"24242-02-242 14:37:32"}
+{"level":"error","msg":"Fails to connect to database: failed to connect to `host=postgres user=postgres database=thientandb`: hostname resolving error (lookup postgres: no such host)","time":"24242-02-242 14:37:34"}
+{"level":"info","msg":"Connect suscess to database: \u003cnil\u003e","time":"24242-02-242 14:37:34"}
+{"level":"error","msg":"Fails to connect to database: failed to connect to `host=postgres user=postgres database=thientandb`: hostname resolving error (lookup postgres: no such host)","time":"24242-02-242 14:37:36"}
+{"level":"info","msg":"Connect suscess to database: \u003cnil\u003e","time":"24242-02-242 14:37:36"}
+{"level":"error","msg":"Fails to connect to database: failed to connect to `host=postgres user=postgres database=thientandb`: hostname resolving error (lookup postgres: no such host)","time":"24242-02-242 14:37:38"}
+{"level":"info","msg":"Connect suscess to database: \u003cnil\u003e","time":"24242-02-242 14:37:38"}
+{"level":"error","msg":"Fails to connect to database: failed to connect to `host=postgres user=postgres database=thientandb`: hostname resolving error (lookup postgres: no such host)","time":"24242-02-242 14:37:41"}
+{"level":"info","msg":"Connect suscess to database: \u003cnil\u003e","time":"24242-02-242 14:37:41"}
+{"level":"error","msg":"Fails to connect to database: failed to connect to `host=postgres user=postgres database=thientandb`: hostname resolving error (lookup postgres: no such host)","time":"24242-02-242 14:37:43"}
+{"level":"info","msg":"Connect suscess to database: \u003cnil\u003e","time":"24242-02-242 14:37:43"}
+{"level":"error","msg":"Fails to connect to database: failed to connect to `host=postgres user=postgres database=thientandb`: hostname resolving error (lookup postgres: no such host)","time":"24242-02-242 14:37:45"}
+{"level":"info","msg":"Connect suscess to database: \u003cnil\u003e","time":"24242-02-242 14:37:45"}
+{"level":"error","msg":"Fails to connect to database: failed to connect to `host=postgres user=postgres database=thientandb`: hostname resolving error (lookup postgres: no such host)","time":"24242-02-242 14:37:48"}
+{"level":"info","msg":"Connect suscess to database: \u003cnil\u003e","time":"24242-02-242 14:37:48"}
+{"level":"error","msg":"Fails to connect to database: failed to connect to `host=postgres user=postgres database=thientandb`: hostname resolving error (lookup postgres: no such host)","time":"24242-02-242 14:37:50"}
+{"level":"info","msg":"Connect suscess to database: \u003cnil\u003e","time":"24242-02-242 14:37:50"}

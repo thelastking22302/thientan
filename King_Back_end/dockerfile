@@ -1,0 +1,19 @@
+FROM golang:alpine AS builder
+
+RUN apk add --no-cache git
+
+WORKDIR /app
+
+COPY go.mod go.sum ./
+RUN go mod download
+
+COPY . .
+
+RUN go build -o kingbackend ./cmd/api/main.go
+
+FROM scratch
+
+COPY --from=builder /app/kingbackend /kingbackend
+COPY --from=builder /app/.env /.env
+
+ENTRYPOINT ["/kingbackend"]
