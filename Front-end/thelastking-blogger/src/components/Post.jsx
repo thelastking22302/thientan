@@ -453,7 +453,13 @@ export function Posts() {
           {selectedProduct?.image && (
             <div className="w-full h-[24rem] overflow-hidden rounded-lg shadow-lg mb-4">
               <img
-                src={selectedProduct.image}
+                src={
+                  selectedProduct?.image
+                    ? (selectedProduct.image.startsWith('http')
+                        ? selectedProduct.image
+                        : `http://localhost:8000/${selectedProduct.image.replace(/^\/+/, '')}`)
+                    : ''
+                }
                 alt={selectedProduct?.title}
                 className="w-full h-full object-contain"
               />

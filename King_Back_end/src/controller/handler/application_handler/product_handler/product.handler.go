@@ -4,8 +4,6 @@ import (
 	"net/http"
 	"time"
 
-	"log"
-
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"gorm.io/gorm"
@@ -18,14 +16,60 @@ import (
 
 func HandlerCreateProduct(db *gorm.DB, socketServer *socket_handler.SocketServer) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var inputProduct req_users.ProductInput
-		if err := c.ShouldBind(&inputProduct); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error":   err.Error(),
-				"comment": "Validation failed for product input",
-			})
-			return
+		// Nhận các trường text
+		title := c.PostForm("title")
+		status := c.PostForm("status")
+		yearStr := c.PostForm("year_product")
+		describe := c.PostForm("describe_product")
+		nameFactory := c.PostForm("name_factory")
+
+		// Nhận file ảnh
+		var imageUrl *string
+		fileImage, err := c.FormFile("image")
+		if err == nil && fileImage != nil {
+			savePath := "uploads/" + fileImage.Filename
+			if err := c.SaveUploadedFile(fileImage, savePath); err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Không thể lưu file ảnh"})
+				return
+			}
+			imageUrl = &savePath
 		}
+
+		// Nhận file video (nếu có)
+		var videoUrl *string
+		fileVideo, err := c.FormFile("video")
+		if err == nil && fileVideo != nil {
+			savePath := "uploads/" + fileVideo.Filename
+			if err := c.SaveUploadedFile(fileVideo, savePath); err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Không thể lưu file video"})
+				return
+			}
+			videoUrl = &savePath
+		}
+
+		// Parse year_product
+		var year *time.Time
+		if yearStr != "" {
+			t, err := time.Parse(time.RFC3339, yearStr)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{"error": "Sai định dạng ngày"})
+				return
+			}
+			year = &t
+		}
+
+		// Tạo struct ProductInput
+		inputProduct := req_users.ProductInput{
+			Title:       &title,
+			Image:       imageUrl,
+			Video:       videoUrl,
+			Status:      &status,
+			Year:        year,
+			Describe:    describe,
+			NameFactory: &nameFactory,
+		}
+
+		// Validate và lưu vào DB như cũ
 		validate := validator.New()
 		if err := validate.Struct(inputProduct); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -35,9 +79,6 @@ func HandlerCreateProduct(db *gorm.DB, socketServer *socket_handler.SocketServer
 			return
 		}
 
-		// Log the input data for debugging
-		log.Printf("Received product input: %+v", inputProduct)
-
 		productCtrl := product_service.NewProductController(product_repo.NewSql(db))
 		if err := productCtrl.NewCreateProduct(c.Request.Context(), &inputProduct); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
@@ -46,6 +87,8 @@ func HandlerCreateProduct(db *gorm.DB, socketServer *socket_handler.SocketServer
 			})
 			return
 		}
+
+		// GỬI WEBSOCKET realtime như cũ
 		socketServer.BroadcastMessage(socket_handler.Message{
 			Event: "product:created",
 			Data: gin.H{
@@ -57,8 +100,10 @@ func HandlerCreateProduct(db *gorm.DB, socketServer *socket_handler.SocketServer
 				"year":             inputProduct.Year,
 				"name_factory":     inputProduct.NameFactory,
 				"created_at":       time.Now().UTC(),
-			}})
-		c.JSON(http.StatusOK, common.ItemsResponse("Create suscess!"))
+			},
+		})
+
+		c.JSON(http.StatusOK, gin.H{"message": "Tạo sản phẩm thành công!"})
 	}
 }
 
@@ -95,16 +140,75 @@ func HandlerUpdProduct(db *gorm.DB, socketServer *socket_handler.SocketServer) g
 			})
 			return
 		}
-		var updProduct req_users.ProductInput
-		if err := c.ShouldBind(&updProduct); err != nil {
+
+		// Lấy các trường text
+		title := c.PostForm("title")
+		status := c.PostForm("status")
+		yearStr := c.PostForm("year_product")
+		describe := c.PostForm("describe_product")
+		nameFactory := c.PostForm("name_factory")
+
+		// Lấy file ảnh (nếu có)
+		var imageUrl *string
+		fileImage, err := c.FormFile("image")
+		if err == nil && fileImage != nil {
+			savePath := "uploads/" + fileImage.Filename
+			if err := c.SaveUploadedFile(fileImage, savePath); err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Không thể lưu file ảnh"})
+				return
+			}
+			imageUrl = &savePath
+		}
+
+		// Lấy file video (nếu có)
+		var videoUrl *string
+		fileVideo, err := c.FormFile("video")
+		if err == nil && fileVideo != nil {
+			savePath := "uploads/" + fileVideo.Filename
+			if err := c.SaveUploadedFile(fileVideo, savePath); err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Không thể lưu file video"})
+				return
+			}
+			videoUrl = &savePath
+		}
+
+		// Parse year_product
+		var year *time.Time
+		if yearStr != "" {
+			t, err := time.Parse(time.RFC3339, yearStr)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{"error": "Sai định dạng ngày"})
+				return
+			}
+			year = &t
+		}
+
+		// Tạo struct ProductInput (chỉ truyền trường nào có dữ liệu)
+		updProduct := req_users.ProductInput{
+			Title:       &title,
+			Status:      &status,
+			Year:        year,
+			Describe:    describe,
+			NameFactory: &nameFactory,
+			UpdatedAt:   func() *time.Time { t := time.Now().UTC(); return &t }(),
+		}
+		if imageUrl != nil {
+			updProduct.Image = imageUrl
+		}
+		if videoUrl != nil {
+			updProduct.Video = videoUrl
+		}
+
+		// Validate nếu cần
+		validate := validator.New()
+		if err := validate.Struct(updProduct); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
-				"errors":  err.Error(),
-				"comment": "request update failed",
+				"error":   err.Error(),
+				"comment": "Can't validator",
 			})
 			return
 		}
-		times := time.Now().UTC()
-		updProduct.UpdatedAt = &times
+
 		productCtrl := product_service.NewProductController(product_repo.NewSql(db))
 		if err := productCtrl.NewUpdateProduct(c.Request.Context(), idProduct, &updProduct); err != nil {
 			c.JSON(http.StatusNotFound, gin.H{
@@ -113,6 +217,8 @@ func HandlerUpdProduct(db *gorm.DB, socketServer *socket_handler.SocketServer) g
 			})
 			return
 		}
+
+		// Gửi WebSocket như cũ
 		socketServer.BroadcastMessage(socket_handler.Message{
 			Event: "product:updated",
 			Data: gin.H{

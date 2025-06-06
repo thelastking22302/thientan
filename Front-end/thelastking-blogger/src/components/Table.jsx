@@ -281,41 +281,35 @@ const Table = () => {
       return;
     }
 
-    // Construct updatedData including all fields from editingProduct
-    // Ensure date is formatted correctly if present
-    const formattedYear = editingProduct.year_product ? new Date(editingProduct.year_product).toISOString() : editingProduct.year_product;
-
-    const updatedData = {
-      title: editingProduct.title,
-      status: editingProduct.status,
-      // Prioritize file data if available, otherwise use URL or existing
-      image: editingProduct.fileImage ?? editingProduct.imageUrl ?? editingProduct.image,
-      video: editingProduct.fileVideo ?? editingProduct.videoUrl ?? editingProduct.video,
-      describe_product: editingProduct.describe_product,
-      year_product: formattedYear, // Use formatted year
-      factory_id: editingProduct.factory_id,
-    };
+    const formData = new FormData();
+    formData.append('title', editingProduct.title || "");
+    formData.append('status', editingProduct.status || "");
+    formData.append('describe_product', editingProduct.describe_product || "");
+    formData.append('name_factory', editingProduct.name_factory || "");
+    if (editingProduct.year_product) {
+      const formattedYear = new Date(editingProduct.year_product).toISOString();
+      formData.append('year_product', formattedYear);
+    }
+    if (editingProduct.fileImage) formData.append('image', editingProduct.fileImage);
+    if (editingProduct.fileVideo) formData.append('video', editingProduct.fileVideo);
 
     try {
-      const response = await axios.patch(`http://localhost:8000/thientancay/product/upd/${editingProduct.product_id}`, updatedData, {
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${accessToken}` },
-        withCredentials: true,
+      const response = await fetch(`http://localhost:8000/thientancay/product/upd/${editingProduct.product_id}`, {
+        method: 'PATCH',
+        headers: { Authorization: `Bearer ${accessToken}` }, // KHÔNG set Content-Type
+        body: formData,
       });
 
-      if (response.status !== 200) {
-        throw new Error(response.data?.comment || `Không thể cập nhật sản phẩm: ${response.status} ${response.statusText}`);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.comment || errorData.error || 'Không thể cập nhật sản phẩm');
       }
-
-      // We don't need to manually update state or refetch here
-      // The WebSocket message for the update will handle the state change
-      // and the processedProducts memo will pick up the change.
 
       setEditingProduct(null);
     } catch (err) {
-      console.error("Failed to save product edit:", err); // Keep console error
       setError(err.message);
     }
-  }, [editingProduct]); // No dependencies on fetchProducts needed, WebSocket handles update
+  }, [editingProduct]);
 
   // Calculate available years using PROCESSED products
   const availableYears = useMemo(() => {
@@ -443,10 +437,10 @@ const Table = () => {
                   <td className={classes}>
                     {p.image && (
                       <img
-                        src={p.image}
+                        src={p.image.startsWith('http') ? p.image : `http://localhost:8000/${p.image.replace(/^\/+/, '')}`}
                         alt="Product"
                         className="w-12 h-12 rounded-full object-cover cursor-pointer"
-                        onClick={() => setSelectedImage(p.image)}
+                        onClick={() => setSelectedImage(p.image.startsWith('http') ? p.image : `http://localhost:8000/${p.image.replace(/^\/+/, '')}`)}
                       />
                     )}
                   </td>
@@ -527,7 +521,7 @@ const Table = () => {
 
       <Dialog open={!!selectedImage} handler={() => setSelectedImage(null)} size="sm">
         <DialogBody divider>
-          <img src={selectedImage} alt="Product" className="max-w-full max-h-[80vh] object-contain" />
+          <img src={selectedImage && (selectedImage.startsWith('http') ? selectedImage : `http://localhost:8000/${selectedImage.replace(/^\/+/, '')}`)} alt="Product" className="max-w-full max-h-[80vh] object-contain" />
         </DialogBody>
         <DialogFooter>
           <Button variant="text" color="blue-gray" onClick={() => setSelectedImage(null)}>Đóng</Button>
@@ -572,16 +566,11 @@ const Table = () => {
                   className="hidden"
                   onChange={(e) => {
                     if (e.target.files && e.target.files[0]) {
-                      const file = e.target.files[0];
-                      const reader = new FileReader();
-                      reader.onload = (ev) => {
-                        setEditingProduct(prev => ({
-                          ...prev,
-                          fileImage: ev.target.result,
-                          imageUrl: null,
-                        }));
-                      };
-                      reader.readAsDataURL(file);
+                      setEditingProduct(prev => ({
+                        ...prev,
+                        fileImage: e.target.files[0],
+                        imageUrl: null,
+                      }));
                     }
                   }}
                 />
@@ -618,16 +607,11 @@ const Table = () => {
                   className="hidden"
                   onChange={(e) => {
                     if (e.target.files && e.target.files[0]) {
-                      const file = e.target.files[0];
-                      const reader = new FileReader();
-                      reader.onload = (ev) => {
-                        setEditingProduct(prev => ({
-                          ...prev,
-                          fileVideo: ev.target.result,
-                          videoUrl: null,
-                        }));
-                      };
-                      reader.readAsDataURL(file);
+                      setEditingProduct(prev => ({
+                        ...prev,
+                        fileVideo: e.target.files[0],
+                        videoUrl: null,
+                      }));
                     }
                   }}
                 />

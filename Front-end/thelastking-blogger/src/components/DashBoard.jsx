@@ -209,64 +209,28 @@ const Dashboard = ({ selectedTab }) => {
 
   useEffect(() => {
     const token = getAccessToken();
-    if (!token) {
-      return;
-    }
+    if (!token) return;
+    const wsUrl = `ws://localhost:8000/ws/product?authorization=${encodeURIComponent(token)}`;
+    const socket = new WebSocket(wsUrl);
 
-    const wsUrl = `ws://localhost:8000/ws/product?authorization=Bearer ${encodeURIComponent(token)}`;
-
-    try {
-        let socket; // Declare socket here to be accessible for cleanup
-        socket = new WebSocket(wsUrl);
-        setWs(socket); // Store socket instance in state
-
-        socket.onopen = () => {
-          // console.log('WebSocket product connection opened.');
-          setShowToast({ visible: true, message: 'WebSocket sản phẩm đã kết nối!', isError: false }); // Added toast for connection open
-          socket.send(JSON.stringify({ event: 'subscribe', data: 'products-room' }));
-        };
-
-        socket.onmessage = (event) => {
-          try {
-            const message = JSON.parse(event.data);
-            // Temporarily show a toast to indicate message reception
-            // setShowToast({ visible: true, message: 'WebSocket message received.', isError: false });
-
-            // Use the new update function
-            if (message.event.startsWith('product:')) {
-              updateRawProductsFromWebSocket(message);
-            }
-
-          } catch (error) {
-          }
-        };
-
-        socket.onerror = (error) => {
-          setShowToast({ visible: true, message: 'Lỗi kết nối WebSocket sản phẩm!', isError: true }); // Added toast for connection error
-        };
-
-        socket.onclose = () => {
-           // console.log('WebSocket product connection closed.');
-           setWs(null); // Clear socket instance from state
-           setShowToast({ visible: true, message: 'WebSocket sản phẩm đã đóng kết nối.', isError: false }); // Added toast for connection close
-           // Optional: attempt to reconnect after a delay
-        };
-    } catch (err) {
-        // console.error("Could not set up WebSocket connection:", err);
-        setShowToast({ visible: true, message: 'Không thể thiết lập kết nối WebSocket sản phẩm.', isError: true }); // Added toast for setup error
-    }
-
-    // Clean up the WebSocket connection on unmount or tab change away
-    return () => {
-      // console.log('Cleaning up WebSocket product connection.');
-      if (ws && ws.readyState === WebSocket.OPEN) { // Use ws state for cleanup check
-        ws.close();
-        // console.log('Closed existing WebSocket product connection during cleanup.');
-      }
-      setWs(null); // Ensure ws state is null on cleanup
+    socket.onopen = () => {
+      socket.send(JSON.stringify({ event: 'subscribe', data: 'products-room' }));
     };
+    socket.onmessage = (event) => {
+      try {
+        const message = JSON.parse(event.data);
+        if (["product:created", "product:updated", "product:deleted"].includes(message.event)) {
+          fetchProducts();
+        }
+      } catch (e) {}
+    };
+    socket.onerror = () => {};
+    socket.onclose = () => {};
 
-  }, [updateRawProductsFromWebSocket]); // Dependencies adjusted - only need handler function and potentially ws
+    return () => {
+      socket.close();
+    };
+  }, [fetchProducts]);
 
   // Effect to hide toast automatically after 5 seconds
   useEffect(() => {

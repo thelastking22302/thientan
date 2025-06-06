@@ -12,8 +12,8 @@ const ProductManagement = ({ selectedTab, products, setProducts }) => {
     title: '',
     year_product: '',
     status: '',
-    image: '',
-    video: '',
+    image: null,
+    video: null,
     describe_product: '',
     name_factory: '',
   });
@@ -119,44 +119,34 @@ const ProductManagement = ({ selectedTab, products, setProducts }) => {
       return;
     }
 
-    // Format year_product to ISO 8601 if a date is selected
     let formattedYear = null;
     if (productForm.year_product) {
       try {
-        // Assume input is YYYY-MM-DD from date picker
         const date = new Date(productForm.year_product);
-        // Format to ISO 8601 string (e.g., 2024-06-03T00:00:00Z)
         formattedYear = date.toISOString();
       } catch (error) {
-        // Removed error formatting date console output
         setShowToast({ visible: true, message: 'Định dạng ngày không hợp lệ.', isError: true });
         return;
       }
     }
 
-    const newProductForm = {
-      title: productForm.title || "",
-      image: productForm.image || "",
-      video: productForm.video || null,
-      status: productForm.status || "",
-      year_product: formattedYear, // Use the formatted date or null
-      describe_product: productForm.describe_product || "",
-      name_factory: productForm.name_factory || "",
-    };
+    const formData = new FormData();
+    formData.append('title', productForm.title || "");
+    formData.append('status', productForm.status || "");
+    formData.append('year_product', formattedYear || "");
+    formData.append('describe_product', productForm.describe_product || "");
+    formData.append('name_factory', productForm.name_factory || "");
+    if (productForm.image) formData.append('image', productForm.image);
+    if (productForm.video) formData.append('video', productForm.video);
 
     try {
       const token = getAccessToken();
-      if (!token) {
-        throw new Error('Vui lòng đăng nhập để thực hiện thao tác này!');
-      }
+      if (!token) throw new Error('Vui lòng đăng nhập để thực hiện thao tác này!');
 
       const response = await fetch('http://localhost:8000/thientancay/product/', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(newProductForm),
+        headers: { Authorization: `Bearer ${token}` }, // KHÔNG set Content-Type
+        body: formData,
       });
 
       if (!response.ok) {
@@ -168,8 +158,8 @@ const ProductManagement = ({ selectedTab, products, setProducts }) => {
         title: '',
         year_product: '',
         status: '',
-        image: '',
-        video: '',
+        image: null,
+        video: null,
         describe_product: '',
         name_factory: '',
       });
@@ -177,7 +167,7 @@ const ProductManagement = ({ selectedTab, products, setProducts }) => {
       if (imageInputRef.current) imageInputRef.current.value = '';
       if (videoInputRef.current) videoInputRef.current.value = '';
 
-      setShowToast({ visible: true, message: 'tạo sản phẩm thành công!', isError: false });
+      setShowToast({ visible: true, message: 'Tạo sản phẩm thành công!', isError: false });
     } catch (error) {
       setShowToast({ visible: true, message: error.message, isError: true });
     }
@@ -186,25 +176,13 @@ const ProductManagement = ({ selectedTab, products, setProducts }) => {
   // Xử lý upload ảnh
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProductForm(prev => ({ ...prev, image: reader.result }));
-      };
-      reader.readAsDataURL(file);
-    }
+    if (file) setProductForm(prev => ({ ...prev, image: file }));
   };
 
   // Xử lý upload video
   const handleVideoUpload = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProductForm((prev) => ({ ...prev, video: reader.result }));
-      };
-      reader.readAsDataURL(file);
-    }
+    if (file) setProductForm(prev => ({ ...prev, video: file }));
   };
 
   // Hiển thị thông báo
@@ -245,7 +223,7 @@ const ProductManagement = ({ selectedTab, products, setProducts }) => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
             <div className="flex flex-col gap-2">
-              <Input label="URL ảnh" value={productForm.image} onChange={e => setProductForm({ ...productForm, image: e.target.value })} />
+              <Input label="URL ảnh" value={productForm.image ? productForm.image.name || '' : ''} readOnly />
               <label htmlFor="imageUpload" className="border border-gray-500 px-4 py-2 rounded-md text-sm text-center cursor-pointer hover:bg-gray-50 transition">
                 Tải ảnh từ máy
               </label>
@@ -253,7 +231,7 @@ const ProductManagement = ({ selectedTab, products, setProducts }) => {
             </div>
 
             <div className="flex flex-col gap-2">
-              <Input label="URL video" value={productForm.video} onChange={e => setProductForm({ ...productForm, video: e.target.value })} />
+              <Input label="URL video" value={productForm.video ? productForm.video.name || '' : ''} readOnly />
               <label htmlFor="videoUpload" className="border border-gray-500 px-4 py-2 rounded-md text-sm text-center cursor-pointer hover:bg-gray-50 transition">
                 Tải video từ máy
               </label>

@@ -673,11 +673,11 @@ const UserManagement = ({ currentUser, setCurrentUser, selectedTab, onTabSelect 
   value={formData.role_user}
   onChange={(e) => handleChange({ name: "role_user", value: e.target.value })}
   className={`block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500 ${
-    formErrors.role_user ? 'border-red-500' : ''
+   formErrors.role_user ? 'border-red-500' : ''
   }`}
 >
-  <option value="admin">Admin</option>
-  <option value="user">User</option>
+  <option value="ADMIN">ADMIN</option>
+  <option value="USER">USER</option>
 </select>
             {formErrors.role_user && (
               <Typography variant="small" color="red" className="-mt-3">

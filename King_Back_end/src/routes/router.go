@@ -36,6 +36,8 @@ func ThienTanRouters(incomingRoutes *gin.Engine, socketServer *socket_handler.So
 	setupFactoriesRoutes(router.Group("/factory"), db, socketServer)
 	setupProductRoutes(router.Group("/product"), db, socketServer)
 	setupUserRoutes(router.Group("/users"), db, socketServer)
+
+	incomingRoutes.Static("/uploads", "./uploads")
 }
 
 func setupUserRoutes(user *gin.RouterGroup, db *gorm.DB, socketServer *socket_handler.SocketServer) {
