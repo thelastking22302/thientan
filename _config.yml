@@ -1,0 +1,5 @@
+exclude:
+  - node_modules
+  - Front-end/node_modules
+  - Front-end/node_modules/react-icons/README.md
+  - Front-end/node_modules/react-router/CHANGELOG.md
